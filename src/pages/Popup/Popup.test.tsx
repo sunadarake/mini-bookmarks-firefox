@@ -2,13 +2,13 @@ import { waitFor, fireEvent, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import Popup from "./Popup";
 import React from "react";
-import * as chromeUtil from "./ChromeUtil";
+import * as firefoxUtil from "./FirefoxUtil";
 import { Item } from "../../containers/item";
 
 test("renders Add button", async () => {
     // We retrieve the list of registered sites from the Storage,
     // when the popup is displayed, 
-    jest.spyOn(chromeUtil, "chromeStorageGet").mockImplementation(() => {
+    jest.spyOn(firefoxUtil, "firefoxStorageGet").mockImplementation(() => {
         const items = [
             { url: "https://example.com", title: "Example", hostName: "https://example.com" },
             { url: "https://test.com", title: "Test", hostName: "https://test.com" },
@@ -26,7 +26,7 @@ test("renders Add button", async () => {
 test("renders Total URLs count", async () => {
     // We retrieve the list of registered sites from the Storage,
     // when the popup is displayed, 
-    jest.spyOn(chromeUtil, "chromeStorageGet").mockImplementation(() => {
+    jest.spyOn(firefoxUtil, "firefoxStorageGet").mockImplementation(() => {
         const items = [
             { url: "https://example.com", title: "Example", hostName: "https://example.com" },
             { url: "https://test.com", title: "Test", hostName: "https://test.com" },
@@ -44,7 +44,7 @@ test("renders Total URLs count", async () => {
 test("When we click the 'Add' button, the current URL will be registered.", async () => {
     // We retrieve the list of registered sites from the Storage,
     // when the popup is displayed, 
-    jest.spyOn(chromeUtil, "chromeStorageGet").mockImplementation(() => {
+    jest.spyOn(firefoxUtil, "firefoxStorageGet").mockImplementation(() => {
         const items = [
             { url: "https://example.com", title: "Example", hostName: "https://example.com" },
         ];
@@ -53,7 +53,7 @@ test("When we click the 'Add' button, the current URL will be registered.", asyn
     });
 
     // We obtain the current tab's URL and title, When the Add button is clicked.
-    jest.spyOn(chromeUtil, "chromeTabsQuery").mockImplementation(() => {
+    jest.spyOn(firefoxUtil, "firefoxTabsQuery").mockImplementation(() => {
         const tabs = [
             {
                 url: "https://test.com", title: "Test", favicon: "https://test.com/favicon.ico",
@@ -68,8 +68,8 @@ test("When we click the 'Add' button, the current URL will be registered.", asyn
     });
 
     // The Storage and the badge number will be updated, when the Add button is clicked,
-    jest.spyOn(chromeUtil, "chromeSetBadgeText").mockImplementation((_: Item[]) => { });
-    jest.spyOn(chromeUtil, "chromeStorageSet").mockImplementation((_: Item[]) => { });
+    jest.spyOn(firefoxUtil, "firefoxSetBadgeText").mockImplementation((_: Item[]) => { });
+    jest.spyOn(firefoxUtil, "firefoxStorageSet").mockImplementation((_: Item[]) => { });
 
     render(<Popup />);
 

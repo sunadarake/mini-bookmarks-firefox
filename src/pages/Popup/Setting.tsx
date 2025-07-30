@@ -4,7 +4,7 @@ import { Item } from "../../containers/item";
 import "bootstrap-icons/font/bootstrap-icons.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Common.css";
-import { chromeSetBadgeText, chromeStorageGet, chromeStorageSet } from "./ChromeUtil";
+import { firefoxSetBadgeText, firefoxStorageGet, firefoxStorageSet } from "./FirefoxUtil";
 import { Link } from "react-router-dom";
 
 const Setting: React.FC = () => {
@@ -47,15 +47,15 @@ const Setting: React.FC = () => {
 
             let newItems = JSON.parse(data) as Item[];
 
-            let prevItems = await chromeStorageGet();
+            let prevItems = await firefoxStorageGet();
             prevItems = prevItems.filter(it => {
                 return (newItems.some(nit => nit.url == it.url) == false);
             });
 
             const items = [...newItems, ...prevItems];
 
-            chromeStorageSet(items);
-            chromeSetBadgeText(items);
+            firefoxStorageSet(items);
+            firefoxSetBadgeText(items);
             setSuccessAlert("importが完了しました。");
         } else {
             setErrorAlert("JSONファイルを選択してください。");
@@ -63,7 +63,7 @@ const Setting: React.FC = () => {
     };
 
     const handleExport = async () => {
-        const data = await chromeStorageGet();
+        const data = await firefoxStorageGet();
         const jsonData = JSON.stringify(data);
 
         const url = window.URL.createObjectURL(new Blob([jsonData], { type: 'application/json' }));

@@ -1,23 +1,23 @@
 import { Item } from "../../containers/item";
-import { chromeCheckMigration, chromeSetFlagMigration, chromeStorageGet, chromeStorageSet, chromeStorageSyncGet } from "../Popup/ChromeUtil";
+import { firefoxCheckMigration, firefoxSetFlagMigration, firefoxStorageGet, firefoxStorageSet, firefoxStorageSyncGet } from "../Popup/FirefoxUtil";
 
 const setBadge = async () => {
-    const items = await chromeStorageGet();
+    const items = await firefoxStorageGet();
     browser.browserAction.setBadgeText({ text: (items || []).length.toString() });
 }
 
 const updateStorage = async () => {
-    const isMigration = await chromeCheckMigration();
+    const isMigration = await firefoxCheckMigration();
 
     if (isMigration) {
-        const data = await chromeStorageSyncGet();
+        const data = await firefoxStorageSyncGet();
         const items = data.items;
 
         if (items) {
-            chromeStorageSet(items);
+            firefoxStorageSet(items);
         }
 
-        chromeSetFlagMigration();
+        firefoxSetFlagMigration();
     }
 }
 

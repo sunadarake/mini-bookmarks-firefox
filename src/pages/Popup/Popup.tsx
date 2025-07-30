@@ -4,7 +4,7 @@ import { Item } from "../../containers/item";
 import "bootstrap-icons/font/bootstrap-icons.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./Common.css";
-import { chromeCheckMigration, chromeSetBadgeText, chromeStorageGet, chromeStorageSet, chromeTabsQuery } from "./ChromeUtil";
+import { firefoxCheckMigration, firefoxSetBadgeText, firefoxStorageGet, firefoxStorageSet, firefoxTabsQuery } from "./FirefoxUtil";
 import { Link } from "react-router-dom";
 
 const Popup: React.FC = () => {
@@ -13,7 +13,7 @@ const Popup: React.FC = () => {
 
   useEffect(() => {
     (async () => {
-      const items = await chromeStorageGet();
+      const items = await firefoxStorageGet();
       setItems(items);
     })();
   }, []);
@@ -22,10 +22,10 @@ const Popup: React.FC = () => {
     const filterItems = items.filter(it => it.url !== url);
     const newItems = [{ url, hostName, title }, ...filterItems];
 
-    chromeStorageSet(newItems);
+    firefoxStorageSet(newItems);
     setItems(newItems);
 
-    chromeSetBadgeText(newItems);
+    firefoxSetBadgeText(newItems);
   };
 
   const parseHost = (url: string): string => {
@@ -38,7 +38,7 @@ const Popup: React.FC = () => {
   }
 
   const handleAddURL = async () => {
-    const tabs = await chromeTabsQuery();
+    const tabs = await firefoxTabsQuery();
 
     if (tabs.length > 0) {
       const currentTab = tabs[0];
@@ -55,8 +55,8 @@ const Popup: React.FC = () => {
   const handleDeleteURL = (url: string) => {
     const updateItems = items.filter(it => it.url !== url);
     setItems(updateItems);
-    chromeStorageSet(updateItems);
-    chromeSetBadgeText(updateItems);
+    firefoxStorageSet(updateItems);
+    firefoxSetBadgeText(updateItems);
   };
 
   const filteredItems = searchKeyword
