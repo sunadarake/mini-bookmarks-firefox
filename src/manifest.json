@@ -1,11 +1,12 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "mini bookmarks",
   "description": "Small, but excellent in searchability, another bookmark.",
   "background": {
-    "service_worker": "background.bundle.js"
+    "scripts": ["background.bundle.js"],
+    "persistent": false
   },
-  "action": {
+  "browser_action": {
     "default_popup": "popup.html",
     "default_icon": "icon_48.png"
   },

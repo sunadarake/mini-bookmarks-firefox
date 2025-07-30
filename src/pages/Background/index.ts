@@ -3,7 +3,12 @@ import { chromeCheckMigration, chromeSetFlagMigration, chromeStorageGet, chromeS
 
 const setBadge = async () => {
     const items = await chromeStorageGet();
-    chrome.action.setBadgeText({ text: (items || []).length.toString() });
+    const api = typeof browser !== 'undefined' ? browser : chrome;
+    if (api.browserAction) {
+        api.browserAction.setBadgeText({ text: (items || []).length.toString() });
+    } else if (api.action) {
+        api.action.setBadgeText({ text: (items || []).length.toString() });
+    }
 }
 
 const updateStorage = async () => {
@@ -21,11 +26,12 @@ const updateStorage = async () => {
     }
 }
 
-chrome.runtime.onStartup.addListener(() => {
+const api = typeof browser !== 'undefined' ? browser : chrome;
+api.runtime.onStartup.addListener(() => {
     setBadge();
 });
 
-chrome.runtime.onInstalled.addListener(() => {
+api.runtime.onInstalled.addListener(() => {
     updateStorage();
     setBadge();
 });

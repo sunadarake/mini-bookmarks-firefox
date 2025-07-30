@@ -1,57 +1,91 @@
 import { Item } from "../../containers/item";
 
 /**
- * https://developer.chrome.com/docs/extensions/reference/storage/#type-StorageArea
+ * Cross-browser storage set function
  * 
  * @param updateItems
  */
 export const chromeStorageSet = (updateItems: Item[]) => {
-    chrome.storage.local.set({ MiniBookMark_Items: updateItems });
+    if (typeof browser !== 'undefined') {
+        browser.storage.local.set({ MiniBookMark_Items: updateItems });
+    } else {
+        chrome.storage.local.set({ MiniBookMark_Items: updateItems });
+    }
 }
 
 /**
- * https://developer.chrome.com/docs/extensions/reference/storage/#type-StorageArea
+ * Cross-browser storage get function
  * 
  * @returns
  */
 export const chromeStorageGet = async () => {
-    const data = await <{ MiniBookMark_Items?: Item[] }>chrome.storage.local.get("MiniBookMark_Items");
-
-    return data.MiniBookMark_Items || [];
+    if (typeof browser !== 'undefined') {
+        const data = await browser.storage.local.get("MiniBookMark_Items") as { MiniBookMark_Items?: Item[] };
+        return data.MiniBookMark_Items || [];
+    } else {
+        return new Promise<Item[]>((resolve) => {
+            chrome.storage.local.get("MiniBookMark_Items", (data: { MiniBookMark_Items?: Item[] }) => {
+                resolve(data.MiniBookMark_Items || []);
+            });
+        });
+    }
 }
 
 export const chromeCheckMigration = async (): Promise<boolean> => {
-    const data = await <{ MiniBookMark_isMigration?: number }>chrome.storage.local.get("MiniBookMark_isMigration");
-    return ("MiniBookMark_isMigration" in data);
+    if (typeof browser !== 'undefined') {
+        const data = await browser.storage.local.get("MiniBookMark_isMigration") as { MiniBookMark_isMigration?: number };
+        return ("MiniBookMark_isMigration" in data);
+    } else {
+        return new Promise<boolean>((resolve) => {
+            chrome.storage.local.get("MiniBookMark_isMigration", (data: { MiniBookMark_isMigration?: number }) => {
+                resolve("MiniBookMark_isMigration" in data);
+            });
+        });
+    }
 }
 
 export const chromeSetFlagMigration = () => {
-    chrome.storage.local.set({ MiniBookMark_isMigration: 1 });
+    const api = typeof browser !== 'undefined' ? browser : chrome;
+    api.storage.local.set({ MiniBookMark_isMigration: 1 });
 }
 
 /**
- * https://developer.chrome.com/docs/extensions/reference/storage/#type-StorageArea
+ * Cross-browser storage sync get function
  * 
  * @returns
  */
 export const chromeStorageSyncGet = (): Promise<{ items: Item[] }> => {
-    return chrome.storage.sync.get("items") as Promise<{ items: Item[] }>;
+    if (typeof browser !== 'undefined') {
+        return browser.storage.sync.get("items") as Promise<{ items: Item[] }>;
+    } else {
+        return new Promise<{ items: Item[] }>((resolve) => {
+            chrome.storage.sync.get("items", (data) => {
+                resolve(data as { items: Item[] });
+            });
+        });
+    }
 }
 
 /**
- * https://developer.chrome.com/docs/extensions/reference/action/#method-setBadgeText
+ * Cross-browser badge text function
  * 
  * @param newItems 
  */
 export const chromeSetBadgeText = (newItems: Item[]) => {
-    chrome.action.setBadgeText({ text: (newItems || []).length.toString() });
+    const api = typeof browser !== 'undefined' ? browser : chrome;
+    if (api.browserAction) {
+        api.browserAction.setBadgeText({ text: (newItems || []).length.toString() });
+    } else if (api.action) {
+        api.action.setBadgeText({ text: (newItems || []).length.toString() });
+    }
 };
 
 /**
- * https://developer.chrome.com/docs/extensions/reference/tabs/#method-query
+ * Cross-browser tabs query function
  * 
  * @returns 
  */
 export const chromeTabsQuery = () => {
-    return chrome.tabs.query({ active: true, currentWindow: true });
+    const api = typeof browser !== 'undefined' ? browser : chrome;
+    return api.tabs.query({ active: true, currentWindow: true });
 };
